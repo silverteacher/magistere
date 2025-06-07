@@ -1,370 +1,608 @@
-<!doctypehtml><html lang="fr"><meta charset="UTF-8"><meta content="width=device-width,initial-scale=1"name="viewport"><title>Quiz IA pour chefs d'établissement et inspecteurs</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0,#764ba2 100%);min-height:100vh;padding:20px}.quiz-container{max-width:900px;margin:0 auto;background:rgba(255,255,255,.95);border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.1);backdrop-filter:blur(10px);overflow:hidden}.quiz-header{background:linear-gradient(135deg,#4f46e5 0,#7c3aed 100%);color:#fff;padding:30px;text-align:center;position:relative}.quiz-header::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" fill-opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" fill-opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');opacity:.3}.quiz-title{font-size:2.5em;font-weight:700;margin-bottom:10px;position:relative;z-index:1;text-shadow:0 2px 4px rgba(0,0,0,.3)}.quiz-subtitle{font-size:1.2em;opacity:.9;position:relative;z-index:1}.progress-container{background:rgba(255,255,255,.2);height:8px;border-radius:4px;margin-top:20px;overflow:hidden;position:relative;z-index:1}.progress-bar{height:100%;background:linear-gradient(90deg,#10b981,#34d399);border-radius:4px;transition:width .8s ease;width:0%;position:relative}.progress-bar::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2s infinite}@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}.quiz-content{padding:40px}.question-card{background:#fff;border-radius:20px;padding:35px;margin-bottom:20px;box-shadow:0 15px 35px rgba(0,0,0,.1);border:1px solid rgba(79,70,229,.1);display:none;animation:slideIn .6s ease-out;position:relative;overflow:hidden}.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#4f46e5,#7c3aed,#10b981)}.question-card.active{display:block}@keyframes slideIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}.question-number{display:inline-block;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;padding:10px 20px;border-radius:25px;font-size:.95em;font-weight:600;margin-bottom:25px;box-shadow:0 4px 15px rgba(79,70,229,.3)}.question-text{font-size:1.4em;font-weight:600;color:#1f2937;margin-bottom:30px;line-height:1.5}.answers-container{display:flex;flex-direction:column;gap:15px;margin-bottom:25px}.answer-option{background:#f8fafc;border:2px solid #e2e8f0;border-radius:15px;padding:20px 25px;cursor:pointer;transition:all .4s ease;position:relative;overflow:hidden;font-size:1.05em}.answer-option:hover{background:#f1f5f9;border-color:#4f46e5;transform:translateY(-3px);box-shadow:0 8px 25px rgba(79,70,229,.2)}.answer-option.selected{background:#eef2ff;border-color:#4f46e5;color:#4f46e5;font-weight:600}.answer-option.correct{background:#ecfdf5;border-color:#10b981;color:#065f46}.answer-option.incorrect{background:#fef2f2;border-color:#ef4444;color:#991b1b}.answer-option::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:0 0;transition:background .3s ease}.answer-option:hover::before{background:#4f46e5}.answer-option.selected::before{background:#4f46e5}.answer-option.correct::before{background:#10b981}.answer-option.incorrect::before{background:#ef4444}.feedback-section{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin:20px 0;display:none;animation:fadeIn .5s ease-out}.feedback-section.show{display:block}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.feedback-title{font-weight:600;font-size:1.1em;margin-bottom:10px;color:#374151}.feedback-text{color:#6b7280;line-height:1.6}.controls{display:flex;justify-content:space-between;align-items:center;margin-top:30px;padding-top:25px;border-top:1px solid #e5e7eb;flex-wrap:wrap;gap:15px}.btn{padding:14px 28px;border:none;border-radius:12px;font-size:1em;font-weight:600;cursor:pointer;transition:all .3s ease;text-transform:uppercase;letter-spacing:.5px;position:relative;overflow:hidden}.btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s}.btn:hover::before{left:100%}.btn-primary{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;box-shadow:0 4px 15px rgba(79,70,229,.3)}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(79,70,229,.4)}.btn-secondary{background:#f3f4f6;color:#6b7280}.btn-secondary:hover{background:#e5e7eb;color:#374151;transform:translateY(-1px)}.btn:disabled{opacity:.6;cursor:not-allowed;transform:none!important;box-shadow:none!important}.score-display{text-align:center;font-size:1.1em;color:#6b7280;font-weight:500}.results-card{text-align:center;padding:50px;display:none}.results-card.show{display:block;animation:slideIn .6s ease-out}.score-circle{width:140px;height:140px;border-radius:50%;margin:0 auto 30px;display:flex;align-items:center;justify-content:center;font-size:2.2em;font-weight:700;color:#fff;position:relative;box-shadow:0 10px 30px rgba(0,0,0,.2)}.score-excellent{background:linear-gradient(135deg,#10b981,#34d399)}.score-good{background:linear-gradient(135deg,#3b82f6,#60a5fa)}.score-average{background:linear-gradient(135deg,#f59e0b,#fbbf24)}.score-poor{background:linear-gradient(135deg,#ef4444,#f87171)}.results-title{font-size:2.2em;font-weight:700;margin-bottom:15px;color:#1f2937}.results-subtitle{font-size:1.3em;color:#6b7280;margin-bottom:25px;line-height:1.5}.recommendation-box{background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:2px solid #0ea5e9;border-radius:15px;padding:25px;margin:25px 0;text-align:left}.recommendation-title{font-size:1.2em;font-weight:600;color:#0c4a6e;margin-bottom:10px}.recommendation-text{color:#075985;line-height:1.6;font-size:1.05em}@media (max-width:768px){.quiz-container{margin:10px;border-radius:15px}.quiz-content{padding:25px}.question-card{padding:25px}.quiz-title{font-size:2em}.question-text{font-size:1.2em}.controls{flex-direction:column;gap:15px}.btn{width:100%}}</style><div class="quiz-container"><div class="quiz-header"><h1 class="quiz-title">Quiz IA</h1><p class="quiz-subtitle">Pour Chefs d'Établissement et Inspecteurs<div class="progress-container"><div class="progress-bar"id="progressBar"></div></div></div><div class="quiz-content"><div id="questionsContainer"></div><div class="results-card"id="resultsCard"><div class="score-circle"id="scoreCircle"><span id="finalScore">0/12</span></div><h2 class="results-title"id="resultsTitle">Félicitations !</h2><p class="results-subtitle"id="resultsSubtitle">Vous avez terminé le quiz<div class="recommendation-box"id="recommendationBox"><div class="recommendation-title"id="recommendationTitle">Recommandations</div><div class="recommendation-text"id="recommendationText"></div></div><button class="btn btn-primary"onclick="restartQuiz()">Recommencer</button></div></div></div><script>const questions = [
-{
-question: "Quel est l'objectif principal du diagnostic de maturité numérique dans le pilotage de l'IA ?",
-answers: [
-"Identifier les ressources financières nécessaires",
-"Mesurer l'impact des formations IA sur les élèves",
-"Connaître le niveau de compétence en IA des enseignants",
-"Déterminer le point de départ pour élaborer une stratégie"
-],
-correct: 3,
-feedback: {
-title: "💡 Explication :",
-text: "Le diagnostic de maturité numérique est essentiel pour établir un état des lieux précis avant toute mise en œuvre. Il permet d'identifier les forces, les faiblesses et les besoins spécifiques de l'établissement, constituant ainsi la base d'une stratégie d'intégration de l'IA adaptée et réaliste."
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radio Mystère - Jeu pour Enseignants</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
 }
-},
-{
-question: "Pourquoi est-il essentiel d'accompagner les équipes dans l'intégration de l'IA ?",
-answers: [
-"Pour former les équipes et réduire les résistances",
-"Pour imposer des pratiques uniformes",
-"Pour limiter les expérimentations individuelles",
-"Pour assurer un contrôle direct des usages"
-],
-correct: 0,
-feedback: {
-title: "💡 Explication :",
-text: "L'accompagnement est crucial car il permet de créer un climat de confiance, de développer les compétences nécessaires et de transformer les appréhensions en opportunités d'apprentissage. Cette approche bienveillante favorise une adoption plus sereine et durable de l'IA."
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+min-height: 100vh;
+padding: 20px;
 }
-},
-{
-question: "Quelle est l'approche recommandée pour gérer les résistances au changement lors de l'intégration de l'IA ?",
-answers: [
-"Forcer l'adoption immédiate",
-"Ignorer les résistances pour ne pas ralentir le processus",
-"Sanctionner les personnes réticentes",
-"Identifier les freins et les transformer en opportunités"
-],
-correct: 3,
-feedback: {
-title: "💡 Explication :",
-text: "Les résistances sont naturelles et révèlent souvent des préoccupations légitimes. En les identifiant et en les analysant, on peut comprendre les besoins sous-jacents et développer des solutions qui transforment ces obstacles en leviers d'amélioration et d'adhésion."
+.container {
+max-width: 1200px;
+margin: 0 auto;
+background: rgba(255, 255, 255, 0.95);
+border-radius: 20px;
+padding: 30px;
+box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+backdrop-filter: blur(10px);
 }
-},
-{
-question: "Quel est le rôle des indicateurs de suivi dans le pilotage de l'IA ?",
-answers: [
-"Vérifier la conformité aux normes européennes",
-"Evaluer uniquement les résultats des élèves",
-"Piloter par les données pour ajuster les actions",
-"Classer les établissements par performance"
-],
-correct: 2,
-feedback: {
-title: "💡 Explication :",
-text: "Les indicateurs de suivi constituent le tableau de bord du pilotage. Ils permettent une approche data-driven, offrant une vision objective de l'évolution du projet et facilitant les ajustements nécessaires en temps réel pour optimiser l'efficacité des actions menées."
+h1 {
+text-align: center;
+color: #2c3e50;
+margin-bottom: 30px;
+font-size: 2.5em;
+text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+background: linear-gradient(45deg, #667eea, #764ba2);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
 }
-},
-{
-question: "Que permet la cartographie des positionnements dans le cadre de l'accompagnement IA ?",
-answers: [
-"Comprendre la diversité des attitudes face à l'IA",
-"Identifier les réticences pour les éliminer",
-"Repérer les leaders et les soutenir en priorité",
-"Définir un cadre uniforme de compétences"
-],
-correct: 0,
-feedback: {
-title: "💡 Explication :",
-text: "La cartographie des positionnements révèle la richesse et la complexité des perceptions au sein de l'équipe. Cette compréhension fine permet d'adapter l'accompagnement à chaque profil, respectant les différences individuelles tout en construisant une vision collective cohérente."
+.radio-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 20px;
+margin-bottom: 30px;
 }
-},
-{
-question: "Quelle compétence est essentielle pour un cadre éducatif face à l'IA ?",
-answers: [
-"Maitriser les algorithmes de machine learning",
-"Former les élèves à la programmation",
-"Développer un esprit critique face aux outils d'IA",
-"Utiliser exclusivement les outils validés par le ministère"
-],
-correct: 2,
-feedback: {
-title: "💡 Explication :",
-text: "L'esprit critique est fondamental car il permet d'évaluer la pertinence, les limites et les enjeux éthiques des outils d'IA. Cette compétence transversale permet au cadre de prendre des décisions éclairées et de guider ses équipes vers un usage responsable et réfléchi de ces technologies."
+.radio-card {
+background: white;
+border-radius: 15px;
+padding: 20px;
+box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+border: 3px solid #e9ecef;
+position: relative;
 }
-},
-{
-question: "Quel est l'un des principes fondamentaux de la posture du cadre face à l'IA ?",
-answers: [
-"L'innovation à tout prix",
-"La standardisation des pratiques numériques",
-"La réduction du nombre d'outils numériques",
-"L'exemplarité dans les usages personnels et professionnels"
-],
-correct: 3,
-feedback: {
-title: "💡 Explication :",
-text: "L'exemplarité est essentielle car le cadre éducatif est un modèle pour ses équipes. En démontrant des usages réfléchis et éthiques de l'IA dans sa propre pratique, il inspire confiance et crédibilise son discours d'accompagnement auprès des personnels."
+.radio-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
 }
-},
-{
-question: "Quelle compétence est importante pour contextualiser les enjeux liés à l'IA ?",
-answers: [
-"La littératie numérique avancée",
-"La gestion de crise",
-"L'analyse statistique",
-"La rédaction de protocoles disciplinaires"
-],
-correct: 0,
-feedback: {
-title: "💡 Explication :",
-text: "La littératie numérique avancée permet de comprendre les enjeux techniques, sociétaux et éthiques de l'IA dans leur globalité. Cette compétence permet au cadre de situer l'IA dans le contexte éducatif plus large et d'anticiper ses implications pour l'établissement."
+.radio-card.revealed {
+border-color: #28a745;
 }
-},
-{
-question: "Quel est le rôle du devoir de veille pour un cadre éducatif ?",
-answers: [
-"Garantir la maintenance des outils numériques",
-"Sanctionner les usages abusifs de l'IA",
-"Elaborer des cours d'intelligence artificielle",
-"Informer sur les évolutions réglementaires et éthiques"
-],
-correct: 3,
-feedback: {
-title: "💡 Explication :",
-text: "Le devoir de veille est crucial dans un domaine en évolution rapide comme l'IA. Il permet au cadre de rester informé des évolutions législatives, des bonnes pratiques émergentes et des enjeux éthiques, garantissant ainsi une intégration responsable et conforme aux attentes sociétales."
+.radio-card.playing {
+border-color: #007bff;
+background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
 }
-},
-{
-question: "Quelle méthode est conseillée pour une adoption progressive de l'IA ?",
-answers: [
-"Une mise en place rapide et uniforme",
-"Un seul module de formation obligatoire",
-"Un accompagnement individualisé uniquement",
-"Un parcours progressif par étapes"
-],
-correct: 3,
-feedback: {
-title: "💡 Explication :",
-text: "Le parcours progressif par étapes respecte le rythme d'apprentissage et d'adaptation de chacun. Cette approche structurée permet de construire solidement les compétences, de gérer les appréhensions et d'assurer une montée en compétence durable et maîtrisée."
+.radio-header {
+margin-bottom: 15px;
+text-align: center;
 }
-},
-{
-question: "Quelle est la séquence logique du pilotage du changement lié à l'IA ?",
-answers: [
-"Planification - Diagnostic - Mise en œuvre - Ajustement - Évaluation",
-"Diagnostic - Planification - Mise en œuvre - Évaluation - Ajustement",
-"Mise en œuvre - Planification - Diagnostic - Ajustement - Évaluation",
-"Diagnostic - Mise en œuvre - Planification - Évaluation - Ajustement"
-],
-correct: 1,
-feedback: {
-title: "💡 Explication :",
-text: "Cette séquence logique respecte les principes du management de projet : d'abord comprendre la situation actuelle (diagnostic), puis définir la stratégie (planification), mettre en œuvre les actions, mesurer les résultats (évaluation) et enfin adapter la stratégie (ajustement) selon les enseignements tirés."
+.radio-number {
+width: 40px;
+height: 40px;
+background: linear-gradient(45deg, #667eea, #764ba2);
+color: white;
+border-radius: 50%;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+font-size: 1.2em;
+font-weight: bold;
+margin-bottom: 10px;
 }
-},
-{
-question: "Quelle est la meilleure pratique pour encourager l'appropriation des outils d'IA par les équipes éducatives ?",
-answers: [
-"Imposer une formation obligatoire unique pour tous les personnels",
-"Proposer un accompagnement différencié et progressif en fonction des besoins",
-"Mettre en place un contrôle strict des usages dès le début",
-"Limiter les expérimentations individuelles pour éviter les erreurs"
-],
-correct: 1,
-feedback: {
-title: "💡 Explication :",
-text: "L'accompagnement différencié reconnaît que chaque professionnel a des besoins, des compétences et un rythme d'apprentissage spécifiques. Cette approche personnalisée favorise l'engagement, respecte les particularités individuelles et maximise les chances de réussite de l'intégration de l'IA."
+.radio-name {
+font-size: 1.3em;
+font-weight: bold;
+color: #2c3e50;
+min-height: 1.5em;
+transition: all 0.3s ease;
+}
+.radio-name.hidden {
+color: transparent;
+background: linear-gradient(110deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+background-size: 400% 100%;
+animation: shimmer 3s ease-in-out infinite;
+border-radius: 8px;
+cursor: pointer;
+padding: 8px 15px;
+position: relative;
+}
+.radio-name.hidden::after {
+content: "✨ Cliquez pour révéler ✨";
+color: #64748b;
+font-size: 0.8em;
+font-weight: normal;
+display: block;
+margin-top: 8px;
+animation: pulse 3s ease-in-out infinite;
+}
+@keyframes shimmer {
+0% { background-position: -100% 0; }
+50% { background-position: 100% 0; }
+100% { background-position: -100% 0; }
+}
+@keyframes pulse {
+0%, 100% { opacity: 0.8; }
+50% { opacity: 1; }
+}
+.radio-description {
+color: #64748b;
+margin-bottom: 15px;
+font-size: 0.9em;
+line-height: 1.4;
+min-height: 3em;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+.radio-card.revealed .radio-description {
+opacity: 1;
+}
+.audio-section {
+background: #f8fafc;
+border-radius: 12px;
+padding: 15px;
+margin-bottom: 15px;
+border: 2px solid #e2e8f0;
+}
+.audio-section.active {
+border-color: #3b82f6;
+background: #eff6ff;
+}
+.sample-audio {
+width: 100%;
+margin: 10px 0;
+border-radius: 8px;
+outline: none;
+}
+.sample-audio::-webkit-media-controls-panel {
+background-color: #f1f5f9;
+}
+.play-button {
+background: linear-gradient(45deg, #667eea, #764ba2);
+color: white;
+border: none;
+padding: 12px 20px;
+border-radius: 25px;
+cursor: pointer;
+font-size: 1em;
+font-weight: bold;
+transition: all 0.3s ease;
+width: 100%;
+margin-bottom: 15px;
+}
+.play-button:hover {
+background: linear-gradient(45deg, #764ba2, #667eea);
+transform: scale(1.02);
+}
+.play-button:active {
+transform: scale(0.98);
+}
+.external-links {
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+justify-content: center;
+}
+.external-link {
+background: linear-gradient(45deg, #10b981, #059669);
+color: white;
+text-decoration: none;
+padding: 8px 15px;
+border-radius: 20px;
+font-size: 0.85em;
+display: inline-block;
+transition: all 0.3s ease;
+font-weight: 500;
+}
+.external-link:hover {
+background: linear-gradient(45deg, #059669, #047857);
+transform: translateY(-1px);
+}
+.controls {
+background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+border-radius: 15px;
+padding: 20px;
+margin-top: 20px;
+text-align: center;
+border: 1px solid #e2e8f0;
+}
+.controls h3 {
+color: #2c3e50;
+margin-bottom: 15px;
+}
+.control-buttons {
+display: flex;
+gap: 10px;
+justify-content: center;
+flex-wrap: wrap;
+}
+.control-btn {
+background: linear-gradient(45deg, #10b981, #059669);
+color: white;
+border: none;
+padding: 10px 15px;
+border-radius: 20px;
+cursor: pointer;
+font-size: 0.9em;
+transition: all 0.3s ease;
+font-weight: 500;
+}
+.control-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+.stop-all {
+background: linear-gradient(45deg, #ef4444, #dc2626);
+}
+.stop-all:hover {
+box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+.reveal-all {
+background: linear-gradient(45deg, #f59e0b, #d97706);
+color: white;
+}
+.reveal-all:hover {
+box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+.reset-btn {
+background: linear-gradient(45deg, #6b7280, #4b5563);
+}
+.reset-btn:hover {
+box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+.game-info {
+background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+border-radius: 12px;
+padding: 20px;
+margin-top: 20px;
+border-left: 4px solid #f59e0b;
+}
+.game-info h4 {
+color: #92400e;
+margin-bottom: 12px;
+font-size: 1.1em;
+}
+.game-info p {
+color: #78350f;
+line-height: 1.6;
+}
+.score {
+text-align: center;
+margin: 20px 0;
+font-size: 1.2em;
+color: #2c3e50;
+background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+padding: 15px;
+border-radius: 12px;
+border: 2px solid #0ea5e9;
+}
+.note {
+background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+border: 2px solid #10b981;
+border-radius: 12px;
+padding: 20px;
+margin: 20px 0;
+color: #065f46;
+}
+@media (max-width: 768px) {
+.container {
+padding: 15px;
+margin: 10px;
+}
+h1 {
+font-size: 1.8em;
+margin-bottom: 20px;
+}
+.radio-grid {
+grid-template-columns: 1fr;
+gap: 15px;
+}
+.radio-card {
+padding: 15px;
+}
+.external-links {
+flex-direction: column;
+gap: 6px;
+}
+.control-buttons {
+flex-direction: column;
+align-items: center;
+gap: 8px;
+}
+.control-btn {
+width: 200px;
+max-width: 100%;
+}
+.note, .game-info {
+padding: 15px;
+font-size: 0.9em;
 }
 }
-];
 
-let currentQuestion = 0;
-let score = 0;
-let selectedAnswers = [];
-let showingFeedback = false;
-
-function initQuiz() {
-displayQuestion();
-updateProgress();
+@media (max-width: 480px) {
+.container {
+padding: 10px;
+margin: 5px;
+border-radius: 15px;
 }
-
-function displayQuestion() {
-const container = document.getElementById('questionsContainer');
-if (currentQuestion >= questions.length) {
-showResults();
-return;
+h1 {
+font-size: 1.5em;
 }
-
-const q = questions[currentQuestion];
-container.innerHTML = `
-<div class="question-card active">
-<div class="question-number">Question ${currentQuestion + 1} sur ${questions.length}</div>
-<div class="question-text">${q.question}</div>
-<div class="answers-container">
-${q.answers.map((answer, index) => `
-<div class="answer-option" onclick="selectAnswer(${index})" data-index="${index}">
-${answer}
+.radio-number {
+width: 35px;
+height: 35px;
+font-size: 1em;
+}
+.radio-name {
+font-size: 1.1em;
+}
+.radio-card {
+padding: 12px;
+}
+.play-button {
+padding: 10px 15px;
+font-size: 0.9em;
+}
+.external-link {
+padding: 6px 12px;
+font-size: 0.8em;
+}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🎵 Radio Mystère - Jeu pour Enseignants</h1>
+<div class="note">
+<strong>🎯 Comment utiliser :</strong> Écoutez d'abord l'extrait audio pour deviner la radio, puis cliquez sur la zone grisée pour révéler le nom. Utilisez ensuite les liens pour écouter la radio en direct !
 </div>
-`).join('')}
+<div class="score">
+<span>🏆 Radios révélées : <strong id="revealed-count">0</strong> / <strong id="total-count">6</strong></span>
 </div>
-<div class="feedback-section" id="feedbackSection">
-<div class="feedback-title" id="feedbackTitle"></div>
-<div class="feedback-text" id="feedbackText"></div>
+<div class="radio-grid">
+<!-- Radio 1 -->
+<div class="radio-card" data-radio="france-inter">
+<div class="radio-header">
+<div class="radio-number">1</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">France Inter</div>
+</div>
+<div class="radio-description">
+Radio publique française généraliste avec actualités, culture et divertissement.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(1)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-1" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio1.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="external-links">
+<a href="https://www.radiofrance.fr/franceinter" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
+<!-- Radio 2 -->
+<div class="radio-card" data-radio="france-culture">
+<div class="radio-header">
+<div class="radio-number">2</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">France Culture</div>
+</div>
+<div class="radio-description">
+Radio culturelle avec débats intellectuels, documentaires et émissions d'art.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(2)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-2" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio2.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="external-links">
+<a href="https://www.radiofrance.fr/franceculture" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
+<!-- Radio 3 -->
+<div class="radio-card" data-radio="rtl">
+<div class="radio-header">
+<div class="radio-number">3</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">RTL</div>
+</div>
+<div class="radio-description">
+Radio commerciale française populaire avec informations et musique variée.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(3)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-3" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio3.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="external-links">
+<a href="https://www.rtl.fr" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
+<!-- Radio 4 -->
+<div class="radio-card" data-radio="nostalgie">
+<div class="radio-header">
+<div class="radio-number">4</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">Nostalgie</div>
+</div>
+<div class="radio-description">
+Radio musicale spécialisée dans les hits des années 80, 90 et 2000.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(4)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-4" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio4.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="external-links">
+<a href="http://nostalgie.fr" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
+<!-- Radio 5 -->
+<div class="radio-card" data-radio="europe1">
+<div class="radio-header">
+<div class="radio-number">5</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">Europe 1</div>
+</div>
+<div class="radio-description">
+Radio généraliste avec talk-shows, débats politiques et actualités.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(5)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-5" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio5.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="external-links">
+<a href="http://europe1.fr" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
+<!-- Radio 6 -->
+<div class="radio-card" data-radio="rmc">
+<div class="radio-header">
+<div class="radio-number">6</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">RMC</div>
+</div>
+<div class="radio-description">
+Radio d'information et de sport avec débats et actualités en continu.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(6)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-6" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio6.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="external-links">
+<a href="https://rmc.bfmtv.com" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
 </div>
 <div class="controls">
-<button class="btn btn-secondary" onclick="previousQuestion()" ${currentQuestion === 0 ? 'disabled' : ''}>
-Précédent
-</button>
-<div class="score-display">
-Score: ${score}/${currentQuestion}
-</div>
-<button class="btn btn-secondary" onclick="skipQuestion()" ${showingFeedback ? 'style="display:none;"' : ''}>
-Passer
-</button>
-<button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" disabled>
-${currentQuestion === questions.length - 1 ? 'Terminer' : 'Suivant'}
-</button>
+<h3>🎮 Contrôles du Jeu</h3>
+<div class="control-buttons">
+<button class="control-btn" onclick="playRandomAudio()">🎲 Audio Aléatoire</button>
+<button class="control-btn reveal-all" onclick="revealAllRadios()">👁️ Tout Révéler</button>
+<button class="control-btn reset-btn" onclick="resetGame()">🔄 Recommencer</button>
+<button class="control-btn stop-all" onclick="stopAllAudio()">⏹️ Arrêter Tout</button>
 </div>
 </div>
-`;
-}
+<div class="game-info">
+<h4>🎯 Comment jouer :</h4>
+<p>
+• <strong>Écoutez :</strong> Cliquez sur "Écouter l'extrait mystère" pour entendre un échantillon<br>
+• <strong>Devinez :</strong> Essayez d'identifier la radio grâce au style, à la voix, à la musique<br>
+• <strong>Révélez :</strong> Cliquez sur la zone brillante pour découvrir le nom de la radio<br>
+• <strong>Vérifiez :</strong> Utilisez "Écouter en direct" pour confirmer votre intuition<br>
+• <strong>Analysez :</strong> Comparez les styles, contenus et identités sonores des différentes stations
+</p>
+</div>
+</div>
+<script>
+let revealedCount = 0;
+const totalCount = 6;
+let currentAudio = null;
 
-function selectAnswer(answerIndex) {
-if (showingFeedback) return;
-
-const options = document.querySelectorAll('.answer-option');
-options.forEach(option => option.classList.remove('selected'));
-const selectedOption = document.querySelector(`[data-index="${answerIndex}"]`);
-selectedOption.classList.add('selected');
-selectedAnswers[currentQuestion] = answerIndex;
-document.getElementById('nextBtn').disabled = false;
-}
-
-function skipQuestion() {
-selectedAnswers[currentQuestion] = -1;
-showQuestionFeedback();
-}
-
-function nextQuestion() {
-if (!showingFeedback) {
-showQuestionFeedback();
-} else {
-currentQuestion++;
-showingFeedback = false;
-displayQuestion();
-updateProgress();
-}
-}
-
-function showQuestionFeedback() {
-const correct = questions[currentQuestion].correct;
-const selected = selectedAnswers[currentQuestion];
-const options = document.querySelectorAll('.answer-option');
-const feedback = questions[currentQuestion].feedback;
-
-// Marquer les réponses
-options[correct].classList.add('correct');
-if (selected !== -1 && selected !== correct) {
-options[selected].classList.add('incorrect');
-}
-
-// Afficher le feedback
-const feedbackSection = document.getElementById('feedbackSection');
-const feedbackTitle = document.getElementById('feedbackTitle');
-const feedbackText = document.getElementById('feedbackText');
-
-feedbackTitle.textContent = feedback.title;
-feedbackText.textContent = feedback.text;
-feedbackSection.classList.add('show');
-
-// Compter les points
-if (selected === correct) {
-score++;
-}
-
-// Changer le bouton
-const nextBtn = document.getElementById('nextBtn');
-nextBtn.textContent = currentQuestion === questions.length - 1 ? 'Voir les résultats' : 'Question suivante';
-nextBtn.disabled = false;
-
-// Masquer le bouton "Passer"
-const skipBtn = document.querySelector('[onclick="skipQuestion()"]');
-if (skipBtn) skipBtn.style.display = 'none';
-
-// Désactiver les clics sur les réponses
-const answerOptions = document.querySelectorAll('.answer-option');
-answerOptions.forEach(option => {
-option.style.pointerEvents = 'none';
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+updateScore();
 });
 
-showingFeedback = true;
+function revealRadio(nameElement) {
+if (nameElement.classList.contains('hidden')) {
+nameElement.classList.remove('hidden');
+const card = nameElement.closest('.radio-card');
+card.classList.add('revealed');
+revealedCount++;
+updateScore();
+// Animation de révélation
+nameElement.style.transform = 'scale(1.1)';
+setTimeout(() => {
+nameElement.style.transform = 'scale(1)';
+}, 200);
+}
 }
 
-function previousQuestion() {
-if (currentQuestion > 0) {
-currentQuestion--;
-showingFeedback = false;
-displayQuestion();
-updateProgress();
-}
+function updateScore() {
+document.getElementById('revealed-count').textContent = revealedCount;
+document.getElementById('total-count').textContent = totalCount;
 }
 
-function updateProgress() {
-const progress = ((currentQuestion) / questions.length) * 100;
-document.getElementById('progressBar').style.width = progress + '%';
+function revealAllRadios() {
+document.querySelectorAll('.radio-name.hidden').forEach(nameElement => {
+revealRadio(nameElement);
+});
 }
 
-function showResults() {
-document.getElementById('questionsContainer').style.display = 'none';
-const resultsCard = document.getElementById('resultsCard');
-const scoreCircle = document.getElementById('scoreCircle');
-const finalScore = document.getElementById('finalScore');
-const resultsTitle = document.getElementById('resultsTitle');
-const resultsSubtitle = document.getElementById('resultsSubtitle');
-const recommendationTitle = document.getElementById('recommendationTitle');
-const recommendationText = document.getElementById('recommendationText');
+function resetGame() {
+document.querySelectorAll('.radio-name').forEach(nameElement => {
+nameElement.classList.add('hidden');
+});
+document.querySelectorAll('.radio-card').forEach(card => {
+card.classList.remove('revealed', 'playing');
+});
+document.querySelectorAll('.audio-section').forEach(section => {
+section.classList.remove('active');
+});
+revealedCount = 0;
+updateScore();
+stopAllAudio();
+}
 
-finalScore.textContent = `${score}/${questions.length}`;
-const percentage = (score / questions.length) * 100;
+function toggleAudio(audioId) {
+const audio = document.getElementById(`audio-${audioId}`);
+const section = audio.closest('.audio-section');
+const button = section.querySelector('.play-button');
+const card = section.closest('.radio-card');
 
-if (percentage < 20) {
-scoreCircle.className = 'score-circle score-poor';
-resultsTitle.textContent = 'Un bon point de départ !';
-resultsSubtitle.textContent = 'Vous découvrez le monde de l\'IA en éducation.';
-recommendationTitle.textContent = '📚 Recommandation de parcours :';
-recommendationText.textContent = 'Vous gagneriez à suivre un maximum de modules dans ce parcours pour développer une solide compréhension des enjeux de l\'IA en éducation.';
-} else if (percentage < 50) {
-scoreCircle.className = 'score-circle score-average';
-resultsTitle.textContent = 'De bonnes bases !';
-resultsSubtitle.textContent = 'Vous avez des connaissances de base sur l\'IA.';
-recommendationTitle.textContent = '📚 Recommandation de parcours :';
-recommendationText.textContent = 'Vous avez de bonnes bases, choisissez au moins 5 modules dans ce parcours pour approfondir vos connaissances et développer votre expertise.';
-} else if (percentage < 80) {
-scoreCircle.className = 'score-circle score-good';
-resultsTitle.textContent = 'Très bien !';
-resultsSubtitle.textContent = 'Vous êtes plutôt à l\'aise avec l\'IA en éducation.';
-recommendationTitle.textContent = '📚 Recommandation de parcours :';
-recommendationText.textContent = 'Vous êtes plutôt à l\'aise, choisissez au moins 4 modules de votre choix pour perfectionner vos compétences dans les domaines qui vous intéressent le plus.';
+if (audio.paused) {
+// Arrêter tous les autres audios
+stopAllAudio();
+// Jouer cet audio
+audio.play();
+section.classList.add('active');
+card.classList.add('playing');
+button.textContent = '⏸️ Arrêter l\'extrait';
+currentAudio = audio;
 } else {
-scoreCircle.className = 'score-circle score-excellent';
-resultsTitle.textContent = 'Excellent !';
-resultsSubtitle.textContent = 'Vous maîtrisez parfaitement les enjeux de l\'IA en éducation.';
-recommendationTitle.textContent = '🎯 Recommandation de parcours :';
-recommendationText.textContent = 'Vous êtes très à l\'aise sur le sujet de l\'IA. Choisissez les modules que vous voulez pour explorer des aspects spécifiques ou rester à la pointe des innovations.';
+// Arrêter cet audio
+audio.pause();
+audio.currentTime = 0;
+section.classList.remove('active');
+card.classList.remove('playing');
+button.textContent = '🎧 Écouter l\'extrait mystère';
+currentAudio = null;
+}
 }
 
-resultsCard.classList.add('show');
-document.getElementById('progressBar').style.width = '100%';
+function stopAllAudio() {
+document.querySelectorAll('.sample-audio').forEach(audio => {
+audio.pause();
+audio.currentTime = 0;
+});
+document.querySelectorAll('.audio-section').forEach(section => {
+section.classList.remove('active');
+});
+document.querySelectorAll('.radio-card').forEach(card => {
+card.classList.remove('playing');
+});
+document.querySelectorAll('.play-button').forEach(button => {
+button.textContent = '🎧 Écouter l\'extrait mystère';
+});
+currentAudio = null;
 }
 
-function restartQuiz() {
-currentQuestion = 0;
-score = 0;
-selectedAnswers = [];
-showingFeedback = false;
-document.getElementById('questionsContainer').style.display = 'block';
-document.getElementById('resultsCard').classList.remove('show');
-initQuiz();
+function playRandomAudio() {
+stopAllAudio();
+const randomId = Math.floor(Math.random() * 6) + 1;
+setTimeout(() => {
+toggleAudio(randomId);
+}, 300);
 }
 
-// Initialiser le quiz
-initQuiz();</script>
-<script>
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', e => {
-    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key))) {
-      e.preventDefault();
-    }
-  });
+// Gestion automatique de la fin de lecture
+document.querySelectorAll('.sample-audio').forEach((audio, index) => {
+audio.addEventListener('ended', function() {
+const section = audio.closest('.audio-section');
+const card = section.closest('.radio-card');
+const button = section.querySelector('.play-button');
+section.classList.remove('active');
+card.classList.remove('playing');
+button.textContent = '🎧 Écouter l\'extrait mystère';
+});
+});
 </script>
+</body>
+</html>
