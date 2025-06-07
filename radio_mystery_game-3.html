@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radio Mystère - Jeu pour Enseignants</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+min-height: 100vh;
+padding: 20px;
+}
+.container {
+max-width: 1200px;
+margin: 0 auto;
+background: rgba(255, 255, 255, 0.95);
+border-radius: 20px;
+padding: 30px;
+box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+backdrop-filter: blur(10px);
+}
+h1 {
+text-align: center;
+color: #2c3e50;
+margin-bottom: 30px;
+font-size: 2.5em;
+text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+background: linear-gradient(45deg, #667eea, #764ba2);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+.radio-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 20px;
+margin-bottom: 30px;
+}
+.radio-card {
+background: white;
+border-radius: 15px;
+padding: 20px;
+box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+border: 3px solid #e9ecef;
+position: relative;
+}
+.radio-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+.radio-card.revealed {
+border-color: #28a745;
+}
+.radio-card.playing {
+border-color: #007bff;
+background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+}
+.radio-header {
+margin-bottom: 15px;
+text-align: center;
+}
+.radio-number {
+width: 40px;
+height: 40px;
+background: linear-gradient(45deg, #667eea, #764ba2);
+color: white;
+border-radius: 50%;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+font-size: 1.2em;
+font-weight: bold;
+margin-bottom: 10px;
+}
+.radio-name {
+font-size: 1.3em;
+font-weight: bold;
+color: #2c3e50;
+min-height: 1.5em;
+transition: all 0.3s ease;
+}
+.radio-name.hidden {
+color: transparent;
+background: linear-gradient(110deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+background-size: 400% 100%;
+animation: shimmer 3s ease-in-out infinite;
+border-radius: 8px;
+cursor: pointer;
+padding: 8px 15px;
+position: relative;
+}
+.radio-name.hidden::after {
+content: "✨ Cliquez pour révéler ✨";
+color: #64748b;
+font-size: 0.8em;
+font-weight: normal;
+display: block;
+margin-top: 8px;
+animation: pulse 3s ease-in-out infinite;
+}
+@keyframes shimmer {
+0% { background-position: -100% 0; }
+50% { background-position: 100% 0; }
+100% { background-position: -100% 0; }
+}
+@keyframes pulse {
+0%, 100% { opacity: 0.8; }
+50% { opacity: 1; }
+}
+.radio-description {
+color: #64748b;
+margin-bottom: 15px;
+font-size: 0.9em;
+line-height: 1.4;
+min-height: 3em;
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+.radio-card.revealed .radio-description {
+opacity: 1;
+}
+.audio-section {
+background: #f8fafc;
+border-radius: 12px;
+padding: 15px;
+margin-bottom: 15px;
+border: 2px solid #e2e8f0;
+}
+.audio-section.active {
+border-color: #3b82f6;
+background: #eff6ff;
+}
+.sample-audio {
+width: 100%;
+margin: 10px 0;
+border-radius: 8px;
+outline: none;
+}
+.sample-audio::-webkit-media-controls-panel {
+background-color: #f1f5f9;
+}
+.play-button {
+background: linear-gradient(45deg, #667eea, #764ba2);
+color: white;
+border: none;
+padding: 12px 20px;
+border-radius: 25px;
+cursor: pointer;
+font-size: 1em;
+font-weight: bold;
+transition: all 0.3s ease;
+width: 100%;
+margin-bottom: 15px;
+}
+.play-button:hover {
+background: linear-gradient(45deg, #764ba2, #667eea);
+transform: scale(1.02);
+}
+.play-button:active {
+transform: scale(0.98);
+}
+.external-link {
+background: linear-gradient(45deg, #10b981, #059669);
+color: white;
+text-decoration: none;
+padding: 8px 15px;
+border-radius: 20px;
+font-size: 0.85em;
+display: inline-block;
+transition: all 0.3s ease;
+font-weight: 500;
+}
+.hint-section {
+margin: 10px 0;
+text-align: center;
+}
+
+.hint-btn {
+background: linear-gradient(45deg, #f59e0b, #d97706);
+color: white;
+border: none;
+padding: 8px 16px;
+border-radius: 20px;
+cursor: pointer;
+font-size: 0.85em;
+font-weight: 500;
+transition: all 0.3s ease;
+margin-bottom: 10px;
+}
+
+.hint-btn:hover {
+background: linear-gradient(45d, #d97706, #b45309);
+transform: translateY(-1px);
+}
+
+.hint-btn:disabled {
+background: #9ca3af;
+cursor: not-allowed;
+transform: none;
+}
+
+.hint-display {
+background: #fef3c7;
+border: 2px solid #f59e0b;
+border-radius: 8px;
+padding: 12px;
+margin: 8px 0;
+color: #92400e;
+font-size: 0.9em;
+min-height: 20px;
+display: none;
+animation: slideDown 0.3s ease;
+}
+
+.hint-display.visible {
+display: block;
+}
+
+.hint-display.empty {
+display: none;
+}
+
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+.external-links {
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+justify-content: center;
+}
+.external-link:hover {
+background: linear-gradient(45deg, #059669, #047857);
+transform: translateY(-1px);
+}
+.controls h3 {
+color: #2c3e50;
+margin-bottom: 15px;
+}
+.control-buttons {
+display: flex;
+gap: 10px;
+justify-content: center;
+flex-wrap: wrap;
+}
+.control-btn {
+background: linear-gradient(45deg, #10b981, #059669);
+color: white;
+border: none;
+padding: 10px 15px;
+border-radius: 20px;
+cursor: pointer;
+font-size: 0.9em;
+transition: all 0.3s ease;
+font-weight: 500;
+}
+.control-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+.stop-all {
+background: linear-gradient(45deg, #ef4444, #dc2626);
+}
+.stop-all:hover {
+box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+.reveal-all {
+background: linear-gradient(45deg, #f59e0b, #d97706);
+color: white;
+}
+.reveal-all:hover {
+box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+.reset-btn {
+background: linear-gradient(45deg, #6b7280, #4b5563);
+}
+.reset-btn:hover {
+box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+.game-info {
+background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+border-radius: 12px;
+padding: 20px;
+margin-top: 20px;
+border-left: 4px solid #f59e0b;
+}
+.game-info h4 {
+color: #92400e;
+margin-bottom: 12px;
+font-size: 1.1em;
+}
+.game-info p {
+color: #78350f;
+line-height: 1.6;
+}
+.score {
+text-align: center;
+margin: 20px 0;
+font-size: 1.1em;
+color: #2c3e50;
+background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+padding: 20px;
+border-radius: 12px;
+border: 2px solid #0ea5e9;
+}
+
+.score-display {
+display: flex;
+justify-content: space-around;
+align-items: center;
+flex-wrap: wrap;
+gap: 15px;
+}
+
+.score-display > span {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 5px;
+}
+
+.points {
+color: #059669;
+font-weight: bold;
+}
+
+.hints-used {
+color: #d97706;
+font-weight: bold;
+}
+.note {
+background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+border: 2px solid #10b981;
+border-radius: 12px;
+padding: 20px;
+margin: 20px 0;
+color: #065f46;
+}
+@media (max-width: 768px) {
+.container {
+padding: 15px;
+margin: 10px;
+}
+h1 {
+font-size: 1.8em;
+margin-bottom: 20px;
+}
+.radio-grid {
+grid-template-columns: 1fr;
+gap: 15px;
+}
+.radio-card {
+padding: 15px;
+}
+.external-links {
+flex-direction: column;
+gap: 6px;
+}
+.control-buttons {
+flex-direction: column;
+align-items: center;
+gap: 8px;
+}
+.control-btn {
+width: 200px;
+max-width: 100%;
+}
+.note, .game-info {
+padding: 15px;
+font-size: 0.9em;
+}
+}
+
+@media (max-width: 480px) {
+.container {
+padding: 10px;
+margin: 5px;
+border-radius: 15px;
+}
+h1 {
+font-size: 1.5em;
+}
+.radio-number {
+width: 35px;
+height: 35px;
+font-size: 1em;
+}
+.radio-name {
+font-size: 1.1em;
+}
+.radio-card {
+padding: 12px;
+}
+.play-button {
+padding: 10px 15px;
+font-size: 0.9em;
+}
+.external-link {
+padding: 6px 12px;
+font-size: 0.8em;
+}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🎵 Radio Mystère - Jeu pour Enseignants</h1>
+<div class="note">
+<strong>🎯 Comment utiliser :</strong> Écoutez d'abord l'extrait audio pour deviner la radio, puis cliquez sur la zone grisée pour révéler le nom. Utilisez ensuite les liens pour écouter la radio en direct !
+</div>
+<div class="score">
+<div class="score-display">
+<span>🏆 Radios révélées : <strong id="revealed-count">0</strong> / <strong id="total-count">6</strong></span>
+<span class="points">💎 Score : <strong id="game-score">0</strong> points</span>
+<span class="hints-used">💡 Indices utilisés : <strong id="hints-count">0</strong></span>
+</div>
+</div>
+<div class="radio-grid">
+<!-- Radio 1 -->
+<div class="radio-card" data-radio="france-inter">
+<div class="radio-header">
+<div class="radio-number">1</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">France Inter</div>
+</div>
+<div class="radio-description">
+Radio publique française généraliste avec actualités, culture et divertissement.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(1)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-1" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio1.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="hint-section">
+<button class="hint-btn" onclick="showHint(1)">💡 Indice</button>
+<div class="hint-display" id="hint-1"></div>
+</div>
+<div class="external-links">
+<a href="https://www.radiofrance.fr/franceinter" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
+<!-- Radio 2 -->
+<div class="radio-card" data-radio="france-culture">
+<div class="radio-header">
+<div class="radio-number">2</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">France Culture</div>
+</div>
+<div class="radio-description">
+Radio culturelle avec débats intellectuels, documentaires et émissions d'art.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(2)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-2" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio2.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="hint-section">
+<button class="hint-btn" onclick="showHint(2)">💡 Indice</button>
+<div class="hint-display" id="hint-2"></div>
+</div>
+<div class="external-links">
+<a href="https://www.radiofrance.fr/franceculture" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
+<!-- Radio 3 -->
+<div class="radio-card" data-radio="rtl">
+<div class="radio-header">
+<div class="radio-number">3</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">RTL</div>
+</div>
+<div class="radio-description">
+Radio commerciale française populaire avec informations et musique variée.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(3)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-3" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio3.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="hint-section">
+<button class="hint-btn" onclick="showHint(3)">💡 Indice</button>
+<div class="hint-display" id="hint-3"></div>
+</div>
+<div class="external-links">
+<a href="https://www.rtl.fr" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
+<!-- Radio 4 -->
+<div class="radio-card" data-radio="nostalgie">
+<div class="radio-header">
+<div class="radio-number">4</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">Nostalgie</div>
+</div>
+<div class="radio-description">
+Radio musicale spécialisée dans les hits des années 80, 90 et 2000.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(4)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-4" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio4.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="hint-section">
+<button class="hint-btn" onclick="showHint(4)">💡 Indice</button>
+<div class="hint-display" id="hint-4"></div>
+</div>
+<div class="external-links">
+<a href="http://nostalgie.fr" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
+<!-- Radio 5 -->
+<div class="radio-card" data-radio="europe1">
+<div class="radio-header">
+<div class="radio-number">5</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">Europe 1</div>
+</div>
+<div class="radio-description">
+Radio généraliste avec talk-shows, débats politiques et actualités.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(5)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-5" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio5.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="hint-section">
+<button class="hint-btn" onclick="showHint(5)">💡 Indice</button>
+<div class="hint-display" id="hint-5"></div>
+</div>
+<div class="external-links">
+<a href="http://europe1.fr" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
+<!-- Radio 6 -->
+<div class="radio-card" data-radio="rmc">
+<div class="radio-header">
+<div class="radio-number">6</div>
+<div class="radio-name hidden" onclick="revealRadio(this)">RMC</div>
+</div>
+<div class="radio-description">
+Radio d'information et de sport avec débats et actualités en continu.
+</div>
+<div class="audio-section">
+<button class="play-button" onclick="toggleAudio(6)">🎧 Écouter l'extrait mystère</button>
+<audio class="sample-audio" id="audio-6" preload="metadata">
+<source src="https://dane.site.ac-lille.fr/wp-content/uploads/sites/8/2025/06/Radio6.m4a" type="audio/mp4">
+Votre navigateur ne supporte pas l'audio.
+</audio>
+<div class="hint-section">
+<button class="hint-btn" onclick="showHint(6)">💡 Indice</button>
+<div class="hint-display" id="hint-6"></div>
+</div>
+<div class="external-links">
+<a href="https://rmc.bfmtv.com" target="_blank" class="external-link">🔴 Écouter en direct</a>
+</div>
+</div>
+</div>
+</div>
+<div class="controls">
+<h3>🎮 Contrôles du Jeu</h3>
+<div class="control-buttons">
+<button class="control-btn" onclick="playRandomAudio()">🎲 Audio Aléatoire</button>
+<button class="control-btn reveal-all" onclick="revealAllRadios()">👁️ Tout Révéler</button>
+<button class="control-btn reset-btn" onclick="resetGame()">🔄 Recommencer</button>
+<button class="control-btn stop-all" onclick="stopAllAudio()">⏹️ Arrêter Tout</button>
+</div>
+</div>
+<div class="game-info">
+<h4>🎯 Comment jouer :</h4>
+<p>
+• <strong>Écoutez :</strong> Cliquez sur "Écouter l'extrait mystère" pour entendre un échantillon<br>
+• <strong>Devinez :</strong> Essayez d'identifier la radio grâce au style, à la voix, à la musique<br>
+• <strong>Révélez :</strong> Cliquez sur la zone brillante pour découvrir le nom de la radio<br>
+• <strong>Vérifiez :</strong> Utilisez "Écouter en direct" pour confirmer votre intuition<br>
+• <strong>Analysez :</strong> Comparez les styles, contenus et identités sonores des différentes stations
+</p>
+</div>
+</div>
+<script>
+let revealedCount = 0;
+const totalCount = 6;
+let currentAudio = null;
+let gameScore = 0;
+let hintsUsed = 0;
+
+// Indices pour chaque radio
+const radioHints = {
+1: [
+"🎭 Radio du service public français",
+"📻 Fréquence historique : 87.8 FM à Paris", 
+"🎪 Célèbre pour ses émissions humoristiques"
+],
+2: [
+"📚 Spécialisée dans la culture et les idées",
+"🎨 Documentaires et débats intellectuels",
+"🏛️ Radio France, chaîne culturelle"
+],
+3: [
+"📈 Radio commerciale très populaire",
+"📰 Slogan : 'RTL, toujours avec vous'",
+"🎵 Mix info-musique grand public"
+],
+4: [
+"🎶 Spécialiste des tubes d'hier",
+"⏰ Années 80, 90 et 2000",
+"💫 'Les plus belles chansons de votre vie'"
+],
+5: [
+"🗣️ Talk-shows et débats politiques",
+"⭐ Animateurs vedettes du matin",
+"📻 Historiquement 'Europe numéro 1'"
+],
+6: [
+"⚽ Info-sport en continu",
+"🎙️ Débats passionnés et polémiques",
+"🔴 Groupe BFM, spécialiste de l'actualité"
+]
+};
+
+// Initialisation
+document.addEventListener('DOMContentLoaded', function() {
+updateScore();
+});
+
+function revealRadio(nameElement) {
+if (nameElement.classList.contains('hidden')) {
+nameElement.classList.remove('hidden');
+const card = nameElement.closest('.radio-card');
+card.classList.add('revealed');
+revealedCount++;
+
+// Calcul des points selon les indices utilisés
+const radioNumber = parseInt(card.querySelector('.radio-number').textContent);
+const hintsForThisRadio = card.querySelectorAll('.hint-display.visible').length;
+let points = 0;
+if (hintsForThisRadio === 0) points = 100; // Sans indice
+else if (hintsForThisRadio === 1) points = 75; // 1 indice
+else if (hintsForThisRadio === 2) points = 50; // 2 indices  
+else points = 25; // 3 indices
+
+gameScore += points;
+updateScore();
+
+// Animation de révélation avec points
+nameElement.style.transform = 'scale(1.1)';
+setTimeout(() => {
+nameElement.style.transform = 'scale(1)';
+}, 200);
+
+// Affichage temporaire des points gagnés
+showPointsAnimation(card, points);
+}
+}
+
+function showPointsAnimation(card, points) {
+const pointsDiv = document.createElement('div');
+pointsDiv.textContent = `+${points} points!`;
+pointsDiv.style.cssText = `
+position: absolute;
+top: 10px;
+right: 10px;
+background: #10b981;
+color: white;
+padding: 5px 10px;
+border-radius: 15px;
+font-size: 0.8em;
+font-weight: bold;
+animation: fadeInOut 2s ease;
+z-index: 100;
+`;
+card.style.position = 'relative';
+card.appendChild(pointsDiv);
+
+setTimeout(() => {
+if (pointsDiv.parentNode) {
+pointsDiv.parentNode.removeChild(pointsDiv);
+}
+}, 2000);
+
+// Ajouter l'animation CSS si elle n'existe pas
+if (!document.querySelector('#points-animation-style')) {
+const style = document.createElement('style');
+style.id = 'points-animation-style';
+style.textContent = `
+@keyframes fadeInOut {
+0% { opacity: 0; transform: translateY(10px); }
+20% { opacity: 1; transform: translateY(0); }
+80% { opacity: 1; transform: translateY(0); }
+100% { opacity: 0; transform: translateY(-10px); }
+}
+`;
+document.head.appendChild(style);
+}
+}
+
+function updateScore() {
+document.getElementById('revealed-count').textContent = revealedCount;
+document.getElementById('total-count').textContent = totalCount;
+document.getElementById('game-score').textContent = gameScore;
+document.getElementById('hints-count').textContent = hintsUsed;
+}
+
+function showHint(radioNumber) {
+const hintDisplay = document.getElementById(`hint-${radioNumber}`);
+const hintBtn = hintDisplay.previousElementSibling;
+const hints = radioHints[radioNumber];
+const currentHintIndex = hintDisplay.children.length;
+
+if (currentHintIndex < hints.length) {
+// Ajouter le nouvel indice
+const hintElement = document.createElement('div');
+hintElement.textContent = `${currentHintIndex + 1}. ${hints[currentHintIndex]}`;
+hintElement.style.marginBottom = '5px';
+hintDisplay.appendChild(hintElement);
+hintDisplay.classList.add('visible');
+hintsUsed++;
+updateScore();
+
+// Désactiver le bouton si tous les indices sont utilisés
+if (currentHintIndex + 1 >= hints.length) {
+hintBtn.disabled = true;
+hintBtn.textContent = '💡 Tous les indices utilisés';
+} else {
+hintBtn.textContent = `💡 Indice (${currentHintIndex + 1}/${hints.length})`;
+}
+}
+}
+
+function revealAllRadios() {
+document.querySelectorAll('.radio-name.hidden').forEach(nameElement => {
+revealRadio(nameElement);
+});
+}
+
+function resetGame() {
+document.querySelectorAll('.radio-name').forEach(nameElement => {
+nameElement.classList.add('hidden');
+});
+document.querySelectorAll('.radio-card').forEach(card => {
+card.classList.remove('revealed', 'playing');
+});
+document.querySelectorAll('.audio-section').forEach(section => {
+section.classList.remove('active');
+});
+// Reset des indices
+document.querySelectorAll('.hint-display').forEach(display => {
+display.innerHTML = '';
+display.classList.remove('visible');
+});
+document.querySelectorAll('.hint-btn').forEach(btn => {
+btn.disabled = false;
+btn.textContent = '💡 Indice';
+});
+revealedCount = 0;
+gameScore = 0;
+hintsUsed = 0;
+updateScore();
+stopAllAudio();
+}
+
+function toggleAudio(audioId) {
+const audio = document.getElementById(`audio-${audioId}`);
+const section = audio.closest('.audio-section');
+const button = section.querySelector('.play-button');
+const card = section.closest('.radio-card');
+
+if (audio.paused) {
+// Arrêter tous les autres audios
+stopAllAudio();
+// Jouer cet audio
+audio.play();
+section.classList.add('active');
+card.classList.add('playing');
+button.textContent = '⏸️ Arrêter l\'extrait';
+currentAudio = audio;
+} else {
+// Arrêter cet audio
+audio.pause();
+audio.currentTime = 0;
+section.classList.remove('active');
+card.classList.remove('playing');
+button.textContent = '🎧 Écouter l\'extrait mystère';
+currentAudio = null;
+}
+}
+
+function stopAllAudio() {
+document.querySelectorAll('.sample-audio').forEach(audio => {
+audio.pause();
+audio.currentTime = 0;
+});
+document.querySelectorAll('.audio-section').forEach(section => {
+section.classList.remove('active');
+});
+document.querySelectorAll('.radio-card').forEach(card => {
+card.classList.remove('playing');
+});
+document.querySelectorAll('.play-button').forEach(button => {
+button.textContent = '🎧 Écouter l\'extrait mystère';
+});
+currentAudio = null;
+}
+
+function playRandomAudio() {
+stopAllAudio();
+const randomId = Math.floor(Math.random() * 6) + 1;
+setTimeout(() => {
+toggleAudio(randomId);
+}, 300);
+}
+
+// Gestion automatique de la fin de lecture
+document.querySelectorAll('.sample-audio').forEach((audio, index) => {
+audio.addEventListener('ended', function() {
+const section = audio.closest('.audio-section');
+const card = section.closest('.radio-card');
+const button = section.querySelector('.play-button');
+section.classList.remove('active');
+card.classList.remove('playing');
+button.textContent = '🎧 Écouter l\'extrait mystère';
+});
+});
+</script>
+</body>
+</html>
